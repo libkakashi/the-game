@@ -67,22 +67,19 @@ class Game {
 		});
 
 		socket.on("turn", (turn) => {
-			if(turn.player != this.you.name){
-				if(turn.type == "look"){
-					
-					if(turn.success)
-						this.getPlayer(turn.last).num += turn.num;
-					else
-						this.getPlayer(turn.player).num += turn.num;
-				}
-				else if(turn.type == "put"){
-					this.getPlayer(turn.player).num -= turn.num;
-				}
-				else 
-					return;
-				
-				this.onUpdate();
+			if(turn.type == "look"){
+				if(turn.success)
+					this.getPlayer(turn.last).num += turn.num;
+				else if(turn.player != this.you.name)
+					this.getPlayer(turn.player).num += turn.num;
 			}
+			else if(turn.type == "put" && turn.player != this.you.name){
+				this.getPlayer(turn.player).num -= turn.num;
+			}
+			else 
+				return;
+			
+			this.onUpdate();
 		});
 	}
 	

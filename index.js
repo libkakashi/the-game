@@ -116,6 +116,10 @@ io.on("connection", socket => {
 			});
 		}
 		
+		socket.on("chat", (msg) =>{
+			io.to("game").emit("chat", { user: user.name, msg });
+		});
+
 		socket.join("game");
 		
 		socket.broadcast.emit("join", {

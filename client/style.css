@@ -187,6 +187,7 @@ button {
 	margin-left: -60px;
 	box-shadow: -1px 0 5px black;
 	transition: 0.2s;
+	cursor: pointer;
 }
 
 .card-back {
@@ -196,6 +197,7 @@ button {
 	position: absolute;
 	box-shadow: 0px 0px 15px black;
 	transition: 0.2s;
+	cursor: default;
 }
 
 .card:hover {
@@ -224,6 +226,40 @@ button {
 	margin: auto;
 }
 */
+
+#extras {
+	margin: 10px;
+	align-self: flex-end;
+}
+/*_______Chatbox______*/
+
+#chatbox {
+	border: solid white;
+	background: rgb(245, 29, 72);
+	height: 70%;
+	display: flex;
+	flex-direction: column;
+}
+#chatbox-title {
+	border-bottom: solid white;
+	padding: 5px;
+}
+#chats {
+	flex: 1;
+	overflow: auto;
+}
+#chat-input {
+	width: 100%;
+	border: none;
+	border-top: solid white;
+	background: none;
+	padding: 5px;
+}
+
+#chat-msg-author {
+	color: green;
+}
+
 ::placeholder {
 	color: white;
 }

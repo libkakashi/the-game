@@ -5,6 +5,7 @@ const controlsEl = document.getElementById("main");
 const logEl = document.getElementById("logs");
 const cardsEl = document.getElementById("cards");
 const planeEl = document.getElementById("plane");
+const chatsEl = document.getElementById("chats");
 const viewers = document.getElementById("viewers");
 
 const game = new Game();
@@ -227,6 +228,16 @@ const flipTopCards = (cards) => {
 	}
 };
 
+const pushToChat = (chatMsg) => {
+	const el = document.createElement("div");
+
+	el.className = "chat-msg";
+	el.id = "chat-msg-"+chatsEl.childNodes.length;
+
+	el.innerHTML = `<span id="chat-msg-author">${chatMsg.user}:</span><span id="chat-msg-content">${chatMsg.msg}:</span>`;
+	chatsEl.appendChild(el);
+};
+
 game.prep();
 
 game.on("join", (user) => {
@@ -285,13 +296,17 @@ game.once("winner", (winner) => {
 	document.write(winner + " won.");
 });
 
+game.on("chat", (chatMsg) => {
+	pushToChat(chatMsg);
+});
+
 game.onUpdate = () => {
 	updateView("game", game);
 };
 
 const loginButton = document.getElementById("login-button");
 const nameInput = document.getElementById("name-input");
-/*
+
 setView("game");
 setCards([
 	["A", "S"],
@@ -323,7 +338,7 @@ setCards([
 	["K", "C"],
 ]);
 enableInput(["throw", "look", "pass", "as"]);
-*/
+
 loginButton.onclick = () => {
 	game.join({
 		name: nameInput.value || Math.random().toString(35)
