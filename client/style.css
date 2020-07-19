@@ -1,12 +1,12 @@
-*, *::after, *::before{
+*, *::after, *::before {
     margin: 0;
     padding: 0;
 }
-*:focus{
+*:focus {
     outline: none;
  }
 
-body{
+body {
     width: 100%;
     height: 100%;
     display: flex;
@@ -24,7 +24,7 @@ button, input {
 	color: white;
 }
 
-#login-area{
+#login-area {
     background-color: rgb(245, 29, 72); 
     display:flex;
 	flex-direction: row;
@@ -217,8 +217,7 @@ button {
 	border: solid red;
 }
 .selected-card {
-	/* box-shadow: -5px 0 2px green; */
-	background: rgb(220, 220, 220);
+	background: rgb(150, 150, 150);
 }
 /*
 #plane {

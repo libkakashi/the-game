@@ -146,7 +146,7 @@ const logTurn = (turn) => {
 	
 	switch(turn.type){
 		case "put":
-			html = `${turn.player} throwed ${turn.num} ${turn.card}s.`;
+			html = `${turn.player} throwed ${turn.num == 1 ? (turn.card == "A" ? "an" : "a") : turn.num} ${game.normalNames[turn.card] || turn.card}${turn.num > 1 ? "s": ""}.`;
 			break;
 		case "pass":
 			html = `${turn.player} passed.`;
@@ -162,7 +162,7 @@ const logTurn = (turn) => {
 			break;
 	}
 	
-	logEl.innerHTML = html+` Its ${turn.next}'s turn now.`;
+	logEl.innerHTML = html+` Its ${turn.next == game.you.name ? "your" : turn.next+"'s"} turn now.`;
 };
 
 const enableInput = (inputs) => {
