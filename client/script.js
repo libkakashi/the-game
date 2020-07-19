@@ -7,6 +7,7 @@ const cardsEl = document.getElementById("cards");
 const planeEl = document.getElementById("plane");
 const chatsEl = document.getElementById("chats");
 const viewers = document.getElementById("viewers");
+const chatInput = document.getElementById("chat-input");
 
 const game = new Game();
 
@@ -37,6 +38,8 @@ controls.throwButton.onclick = () => {
 		disableInput();
 	}
 };
+
+chatInput.onchange = () => socket.emit("chat", chatInput.value);
 
 let currentView = "login";
 
@@ -185,7 +188,7 @@ const putOnPlane = (num) => {
 		el.className = "card-back";
 		
 		el.style["margin-left"] = String(Math.floor(Math.random()*150)-75)+"px";
-		el.style["margin-top"] = String(Math.floor(Math.random()*150)-75)+"px";
+		el.style["margin-bottom"] = String(Math.floor(Math.random()*150))+"px";
 		el.style.transform = `rotate(${Math.floor(Math.random()*90)-45}deg)`;
 		
 		planeEl.appendChild(el);
@@ -208,7 +211,8 @@ const emptySelectedCards = () => {
 
 const flipTopCards = (cards) => {
 	const cardEls = planeEl.childNodes;
-	
+	const x = cards.length*132/2;
+
 	for(let i = 1; i <= cards.length; ++i){
 
 		const cardEl = cardEls[cardEls.length-i];
@@ -219,7 +223,7 @@ const flipTopCards = (cards) => {
 		cardEl.style.transform = "rotate3d(0.5, 0.5, 0, 90deg)";
 
 		cardEl.style.margin = "0";
-		cardEl.style["margin-left"] = `${132*i}px`;
+		cardEl.style["margin-left"] = `${132*i-x}px`;
 
 		setTimeout(() => {
 			cardEl.innerHTML = `&#${game.getUnicodeChar(cards[cards.length-i])};`
@@ -234,7 +238,7 @@ const pushToChat = (chatMsg) => {
 	el.className = "chat-msg";
 	el.id = "chat-msg-"+chatsEl.childNodes.length;
 
-	el.innerHTML = `<span id="chat-msg-author">${chatMsg.user}:</span><span id="chat-msg-content">${chatMsg.msg}:</span>`;
+	el.innerHTML = `<span class="chat-msg-author">${chatMsg.user}:</span><span class="chat-msg-content">${chatMsg.msg}</span>`;
 	chatsEl.appendChild(el);
 };
 
@@ -306,27 +310,10 @@ game.onUpdate = () => {
 
 const loginButton = document.getElementById("login-button");
 const nameInput = document.getElementById("name-input");
-
+/*
 setView("game");
 setCards([
 	["A", "S"],
-	["10", "H"],
-	["Q", "D"],
-	["K", "C"],
-	["A", "S"],
-	["10", "H"],
-	["Q", "D"],
-	["K", "C"],
-	["A", "S"],
-	["10", "H"],
-	["Q", "D"],
-	["K", "C"],
-	["A", "S"],
-	["10", "H"],
-	["Q", "D"],
-	["K", "C"],
-	["10", "H"],
-	["Q", "D"],
 	["K", "C"],
 	["A", "S"],
 	["10", "H"],
@@ -338,7 +325,7 @@ setCards([
 	["K", "C"],
 ]);
 enableInput(["throw", "look", "pass", "as"]);
-
+*/
 loginButton.onclick = () => {
 	game.join({
 		name: nameInput.value || Math.random().toString(35)

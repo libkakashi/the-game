@@ -184,7 +184,7 @@ button {
 .card {
 	font-size: 128px;
 	background: white;
-	margin-left: -60px;
+	margin-left: -55px;
 	box-shadow: -1px 0 5px black;
 	transition: 0.2s;
 	cursor: pointer;
@@ -243,6 +243,7 @@ button {
 #chatbox-title {
 	border-bottom: solid white;
 	padding: 5px;
+	margin-bottom: 5px;
 }
 #chats {
 	flex: 1;
@@ -256,8 +257,18 @@ button {
 	padding: 5px;
 }
 
-#chat-msg-author {
-	color: green;
+.chat-msg {
+	padding: 5px;
+}
+
+.chat-msg-author {
+	color: rgb(245, 29, 72);
+	background: white;
+	padding: 5px;
+}
+
+.chat-msg-content {
+	padding: 5px;
 }
 
 ::placeholder {
