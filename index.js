@@ -9,6 +9,10 @@ const io = socketio(server);
 
 app.use(express.static(__dirname+"/client"));
 
+app.get("game/*", (req, res) => {
+	res.sendFile(__dirname+"/game/index.html");
+});
+
 server.listen(8080, () => console.log("Server running successfully."));
 
 let game = new Game(3);
