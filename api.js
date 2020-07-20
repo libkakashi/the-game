@@ -1,8 +1,9 @@
 const { Game } = require("./game");
 
 module.exports = {
+	activeGames: new Map,
 
-	createNewGame(playersNum, io){
+	createNewGame(playersNum, name, io){
 		const game = new Game(playersNum);
 
 		game.on("turn", (turn) => {
@@ -125,5 +126,12 @@ module.exports = {
 				}
 			});
 		});
+
+		this.activeGames.set(name, { game, io });
+	},
+
+	nameExists(namee){
+		for(let { name } of this.activeGames.values())
+			if(name == namee) return true;
 	}
 };

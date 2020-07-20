@@ -2,19 +2,28 @@ const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
 const { Game } = require("./game");
+const api = require("./api");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+app.use(express.json());
 app.use(express.static(__dirname+"/client"));
 
-app.get("game/*", (req, res) => {
-	res.sendFile(__dirname+"/game/index.html");
+app.get("/game/*", (req, res) => {
+	res.sendFile(__dirname+"/client/game/index.html");
+});
+
+app.post("/api/creategame", (req, res) => {
+	const { name, num } = req.body;
+	console.log(req.body);
+	api.createNewGame(num, name, io.of("/game-"+name));
+	res.send("hehe");
 });
 
 server.listen(8080, () => console.log("Server running successfully."));
-
+/*
 let game = new Game(3);
 
 game.on("turn", (turn) => {
@@ -139,3 +148,4 @@ io.on("connection", socket => {
 		}
 	});
 });
+*/
