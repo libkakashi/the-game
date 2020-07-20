@@ -27,6 +27,7 @@ module.exports = {
 		
 		game.on("winner", (winner) => {
 			io.emit("winner", winner);
+			this.deleteGame(name);
 		});
 
 		game.once("ready", () => {

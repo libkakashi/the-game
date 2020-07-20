@@ -141,7 +141,7 @@ class Game extends Emitter {
 		for(let i = 0; i < num; ++i)
 			this.users.players[i].setCards(cards[i]);
 
-		this.extraCards = exxtraCardsNum > 0 ? Game.deck.slice(Game.deck.length-extraCardsNum, Game.deck.length-1) : [];
+		this.extraCards = extraCardsNum > 0 ? Game.deck.slice(Game.deck.length-extraCardsNum, Game.deck.length-1) : [];
 	}
 	
 	start(){
@@ -307,13 +307,15 @@ class Game extends Emitter {
 				
 				if(this.passCount == this.playersNum){
 					
-					this.flush();
 					let next = this.currentStack[this.currentStack.length-1].player;
+					
 					
 					if(this.winTurn){
 						this.announceWinner(this.winTurnPlayer);
 						next = this.currentStack[this.currentStack.length-2];
 					}
+
+					this.flush();
 					
 					setImmediate(() => this.emit("turn", { 
 						type: "pass",
