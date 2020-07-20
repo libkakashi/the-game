@@ -21,8 +21,13 @@ module.exports = {
 		game.on("abort", () => {
 			io.emit("abort");
 			game = new Game(3);
+			this.deleteGame(name);
 		});
 		
+		game.on("winner", (winner) => {
+			io.emit("winner", winner);
+		});
+
 		game.once("ready", () => {
 			const { name } = game.start();
 		
@@ -132,5 +137,15 @@ module.exports = {
 
 	nameExists(name){
 		return this.activeGames.has(name);
+	},
+
+	deleteGame(name){
+		const game = this.activeGames.get(name);
+		
+		// cuz garbage collection wounld't do it (90% sure lmao)
+		delete game.game;
+		delete game.io;
+
+		this.activeGames.delete(name);
 	}
 };
