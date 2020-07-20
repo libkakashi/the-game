@@ -5,6 +5,7 @@ module.exports = {
 
 	createNewGame(playersNum, name, io){
 		const game = new Game(playersNum);
+		console.log(name);
 
 		game.on("turn", (turn) => {
 			io.emit("turn", turn);
@@ -34,7 +35,7 @@ module.exports = {
 		});
 
 		io.on("connection", socket => {
-	
+			console.log("heheheh");
 			let user;
 			
 			socket.once("message", info => {

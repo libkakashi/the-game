@@ -18,7 +18,7 @@ app.get("/game/*", (req, res) => {
 app.post("/api/creategame", (req, res) => {
 	const { name, num } = req.body;
 	console.log(req.body);
-	api.createNewGame(num, name, io.of("/game-"+name));
+	api.createNewGame(num, name, io.of("/game/"+name));
 	res.send("hehe");
 });
 
