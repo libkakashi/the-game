@@ -23,8 +23,8 @@ app.get("/game/:name", (req, res) => {
 app.post("/api/creategame", (req, res) => {
 	const { name, num } = req.body;
 	
-	if(api.nameExists(name)){
-		res.send({ err: "A game with that name is already running." });
+	if(api.nameExists(name.toLowerCase())){
+		res.send({ err: "A game with that name is already running" });
 	}
 	else {
 		api.createNewGame(num, name, io.of("/game/"+name));
