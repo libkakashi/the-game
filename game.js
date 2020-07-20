@@ -122,13 +122,13 @@ class Game extends Emitter {
 		}
 	}
 	
-	getCards(){
+	distributeCards(){
 		Game.shuffleDeck();
 		
 		const deck = Game.deck;
 		const num = this.users.players.length;
 		const cardsForEach = Math.floor(52/num);
-		const extraCards = 52-cardsForEach*num;
+		const extraCardsNum = Game.deck.length-cardsForEach*num;
 		
 		const cards = [...Array(num)].map(_ => []);
 		
@@ -136,18 +136,18 @@ class Game extends Emitter {
 		
 		for(let i = 0; i < cardsForEach; ++i)
 			for(let j = 0; j < num; ++j)
-				cards[j][i] = deck[++x];
+				cards[j][i] = deck[x++];
 		
 		for(let i = 0; i < num; ++i)
 			this.users.players[i].setCards(cards[i]);
-		
-		return cards;
+
+		this.extraCards = exxtraCardsNum > 0 ? Game.deck.slice(Game.deck.length-extraCardsNum, Game.deck.length-1) : [];
 	}
 	
 	start(){
 		const user = this.users.players[0];
 		
-		this.getCards();
+		this.distributeCards();
 		this.turn = 0;
 		this.state = "STARTED";
 		this.startedAt = Date.now();

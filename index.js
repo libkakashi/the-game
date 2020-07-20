@@ -23,7 +23,13 @@ app.get("/game/:name", (req, res) => {
 app.post("/api/creategame", (req, res) => {
 	const { name, num } = req.body;
 	
-	if(api.nameExists(name)){
+	if(num < 2){
+		res.send({ err: "Minimun two players are required to play this game." });
+	}
+	else if(num > 13){
+		res.send({ err: "Maximun 13 players can play the game." });
+	}
+	else if(api.nameExists(name)){
 		res.send({ err: "A game with that name is already running" });
 	}
 	else {
@@ -43,4 +49,4 @@ api.on("join", (game) => {
 });
 */
 
-server.listen(0, () => console.log("Server running successfully."));
+server.listen(8080, () => console.log("Server running successfully."));

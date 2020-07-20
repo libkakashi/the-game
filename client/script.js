@@ -44,7 +44,7 @@ const updateActiveGames = (games) => {
             </div>
         `;
 				
-				activeGames.set(game.name, game);
+		activeGames.set(game.name, game);
         activeGamesEl.appendChild(el);
     }    
 };

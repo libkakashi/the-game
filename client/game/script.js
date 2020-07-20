@@ -164,7 +164,7 @@ const setMainUserInfo = ({ name, cards }) => {
 const logTurn = (turn) => {
 	
 	if(turn.type == "first"){
-		logEl.innerHTML = `${turn.player} will do the first turn.`;
+		logEl.innerHTML = `${turn.player} will do the first turn. ${turn.extraCards.length == 0 ? `No cards are left out of the game.` : (turn.extraCards.length == 1 ? `The ${game.normalizeCard(turn.extraCards[0])} is left out of the game.` : `${turn.extraCards.map(card => game.normalizeCard(card)).join(", ")} are left out of the game.`)}`;
 		return;
 	}
 	
@@ -312,10 +312,10 @@ game.on("cards", () => {
 	updateView("game", game);
 });
 
-game.once("start", ({ player }) => {
+game.once("start", ({ player, extraCards }) => {
 	setView("game");
 	updateView("game", game);
-	logTurn({ type: "first", player });
+	logTurn({ type: "first", player, extraCards });
 });
 
 game.once("abort", () => {

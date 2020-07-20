@@ -2,7 +2,7 @@ const { Game } = require("./game");
 const Emitter = require("events");
 
 module.exports = {
-	activeGames: new Map,
+	activeGames: {},
 	emitter: new Emitter,
 
 	createNewGame(playersNum, name, io){
@@ -35,7 +35,8 @@ module.exports = {
 			for(let player of game.users.players)
 				player.emit("start", {
 					player: name,
-					cards: player.cards
+					cards: player.cards,
+					extraCards: game.extraCards
 				});
 		});
 
@@ -157,27 +158,28 @@ module.exports = {
 			});
 		});
 
-		this.activeGames.set(name, { game, io });
+		this.activeGames[name] = { name, game, io };
 	},
 
 	nameExists(name){
-		return this.activeGames.has(name);
+		return Boolean(this.activeGames[name]);
 	},
 
 	deleteGame(name){
-		const game = this.activeGames.get(name);
+		const game = this.activeGames[name];
 		
-		// cuz garbage collection wounld't do it (90% sure lmao)
+		// cuz garbage collector won't do the first two
 		delete game.game;
 		delete game.io;
-
-		this.activeGames.delete(name);
+		delete this.activeGames[name];
 	},
 
 	getActiveGames(){
 		const games = [];
 
-		this.activeGames.forEach(({ game }, name) => {
+		for(let name in this.activeGames){
+			const { game } = this.activeGames[name];
+			
 			games.push({
 				name: name, 
 				users: {
@@ -189,7 +191,7 @@ module.exports = {
 				state: game.state,
 				playersNum: game.playersNum 
 			});
-		});
+		};
 
 		return games;
 	},
