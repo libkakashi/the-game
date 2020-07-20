@@ -20,7 +20,6 @@ module.exports = {
 		
 		game.on("abort", () => {
 			io.emit("abort");
-			game = new Game(3);
 			this.deleteGame(name);
 		});
 		
@@ -45,7 +44,13 @@ module.exports = {
 			socket.once("message", info => {
 				const state = game.state;
 				
-				user = game.join(info.name);
+				try {
+					user = game.join(info.name);
+				}
+				catch(e){
+					socket.send({ err: e.message });
+					return;
+				}
 				user.sock = socket;
 				
 				if(state == "WAITING"){
@@ -96,6 +101,7 @@ module.exports = {
 							players: game.users.players.map(player => ({ name: player.name, type: "player" })),
 							viewers: game.users.viewers.map(viewer => ({ name: viewer.name, type: "viewer" }))
 						},
+						playersNum: game.playersNum,
 						state: game.state
 					});
 				}
@@ -106,6 +112,7 @@ module.exports = {
 							viewers: game.users.viewers.map(viewer => ({ name: viewer.name, type: "viewer" }))
 						},
 						state: game.state,
+						playersNum: game.playersNum,
 						currentTurn: {
 							num: game.cardCount,
 							next: game.users.players[game.turn].name,
@@ -147,5 +154,21 @@ module.exports = {
 		delete game.io;
 
 		this.activeGames.delete(name);
+	},
+
+	getActiveGames(){
+		const games = [];
+
+		this.activeGames.forEach(({ name, game }) => {
+			games.push({
+				name: name, 
+				users: game.users, 
+				createdAt: game.createdAt, 
+				startedAt: game.startedAt, 
+				state: game.state 
+			});
+		});
+
+		return games;
 	}
 };

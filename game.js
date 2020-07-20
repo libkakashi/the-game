@@ -73,6 +73,8 @@ class Game extends Emitter {
 	winTurn = false;
 	winTurnPlayer = null;
 
+	createdAt = Date.now();
+	
 	users = {
 		viewers: [],
 		players: []
@@ -104,13 +106,10 @@ class Game extends Emitter {
 	}
 	
 	leave(user){
-		let i;
+		let i = this.users.viewers.indexOf(user);
 		
-		i = this.users.viewers.indexOf(user);
-		
-		if(i != -1){
+		if(i != -1)
 			return this.users.viewers.splice(i, 1);
-		}
 		
 		i = this.users.players.indexOf(user);
 		
@@ -151,8 +150,9 @@ class Game extends Emitter {
 		this.getCards();
 		this.turn = 0;
 		this.state = "STARTED";
-		
-		user.emit("new_turn");
+		this.startedAt = Date.now();
+
+		setImmediate(() => user.emit("new_turn"));
 		
 		return user;
 	}

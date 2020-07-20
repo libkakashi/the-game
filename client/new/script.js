@@ -27,7 +27,7 @@ submitButton.onclick = () => {
             headers: {
                 "Content-type": "application/json"
             },
-            body: JSON.stringify({ name, num: num })
+            body: JSON.stringify({ name: name.toLowerCase(), num })
         })
         .then((res) => res.json())
         .then(json => {

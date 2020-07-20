@@ -95,7 +95,7 @@ class Game {
 				
 				this.users = msg.users;
 				this.state = msg.state;
-				
+				this.playersNum = msg.playersNum;
 				this.you.name = info.name;
 				this.you.type = this.state == "STARTED" ? "viewer" : "player";
 				

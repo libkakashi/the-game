@@ -6,8 +6,10 @@ const logEl = document.getElementById("logs");
 const cardsEl = document.getElementById("cards");
 const planeEl = document.getElementById("plane");
 const playersEl = document.getElementById("players");
-const chatsEl = document.getElementById("chats");
 const viewersEl = document.getElementById("viewers");
+const chatsEl = document.getElementById("chats");
+const wPlayersEl = document.getElementById("playerss");
+const wPlayersNumEl = document.getElementById("players-num");
 const chatInput = document.getElementById("chat-input");
 
 const game = new Game();
@@ -74,8 +76,9 @@ const updateView = (view, game) => {
 	
 		for(let player of game.users.players)
 			html += player.name+"</br>";
-	
-		document.getElementById("playerss").innerHTML = html;
+		
+		wPlayersNumEl.innerHTML = `(${game.users.players.length}/${game.playersNum}) players joined.</br>`;
+		wPlayersEl.innerHTML = html;
 	}
 	else if(view == "game"){
 		let i = 0;
@@ -333,6 +336,8 @@ game.onUpdate = () => {
 
 const loginButton = document.getElementById("login-button");
 const nameInput = document.getElementById("name-input");
+
+disableInput();
 /*
 setView("game");
 setCards([

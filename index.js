@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.static(__dirname+"/client"));
 
 app.get("/game/:name", (req, res) => {
-	const { name } = req.params;
+	const name = req.params.name.toLowerCase();
 
 	if(api.nameExists(name))
 		res.sendFile(__dirname+"/client/game/index.html");	
@@ -23,13 +23,17 @@ app.get("/game/:name", (req, res) => {
 app.post("/api/creategame", (req, res) => {
 	const { name, num } = req.body;
 	
-	if(api.nameExists(name.toLowerCase())){
+	if(api.nameExists(name)){
 		res.send({ err: "A game with that name is already running" });
 	}
 	else {
 		api.createNewGame(num, name, io.of("/game/"+name));
 		res.send({ ok: true });
 	}
+});
+
+app.get("/api/getactivegames", (req, res) => {
+	res.send(api.getActiveGames);
 });
 
 server.listen(8080, () => console.log("Server running successfully."));
