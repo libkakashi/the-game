@@ -34,7 +34,7 @@ module.exports = {
 				});
 		});
 
-		io.on("connection", socket => {
+		io.on("connect", socket => {
 			console.log("heheheh");
 			let user;
 			
@@ -132,7 +132,6 @@ module.exports = {
 	},
 
 	nameExists(namee){
-		for(let { name } of this.activeGames.values())
-			if(name == namee) return true;
+		return this.activeGames.has(name);
 	}
 };

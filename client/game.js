@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io(window.location.pathname);
 const cmpCards = (c1, c2) => c1[0] == c2[0] && c1[1] == c2[1];
 
 class Game {

@@ -5,8 +5,9 @@ const controlsEl = document.getElementById("main");
 const logEl = document.getElementById("logs");
 const cardsEl = document.getElementById("cards");
 const planeEl = document.getElementById("plane");
+const playersEl = document.getElementById("players");
 const chatsEl = document.getElementById("chats");
-const viewers = document.getElementById("viewers");
+const viewersEl = document.getElementById("viewers");
 const chatInput = document.getElementById("chat-input");
 
 const game = new Game();
@@ -90,8 +91,10 @@ const updateView = (view, game) => {
 			}
 		}
 		
+		let j = 0;
+
 		for(let viewer of game.users.viewers)
-			setViewerInfo(viewer);
+			setViewerInfo(viewer, j++);
 	}
 };
 
@@ -123,12 +126,32 @@ const setCards = (cards) => {
 	
 };
 
-const setViewerInfo = ({ name }) => {
-	viewers.appendChild(`<div class="viewer">${name}</div`);
+const setViewerInfo = ({ name }, index) => {
+	let el = document.getElementById("viewer"+index);
+
+	if(!el){
+		el = document.createElement("div");
+		el.className = "viewer";
+		el.id = "viewer"+index;
+
+		playersEl.appendChild(el);
+	}
+
+	el.innerHTML = name;
 };
 
 const setPlayerInfo = ({ name, num }, index) => {
-	document.getElementById("player"+index).innerHTML = `${name}\t| ${num || "?"} cards`;
+	let el = document.getElementById("player"+index);
+
+	if(!el){
+		el = document.createElement("div");
+		el.className = "player";
+		el.id = "player"+index;
+
+		playersEl.appendChild(el);
+	}
+
+	el.innerHTML = `${name}\t| ${num || "?"} cards`;
 };
 
 const setMainUserInfo = ({ name, cards }) => {

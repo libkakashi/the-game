@@ -17,9 +17,14 @@ app.get("/game/*", (req, res) => {
 
 app.post("/api/creategame", (req, res) => {
 	const { name, num } = req.body;
-	console.log(req.body);
-	api.createNewGame(num, name, io.of("/game/"+name));
-	res.send("hehe");
+	
+	if(api.nameExists(name)){
+		res.send({ err: "A game with that name is already running." });
+	}
+	else {
+		api.createNewGame(num, name, io.of("/game/"+name));
+		res.send({ ok: true });
+	}
 });
 
 server.listen(8080, () => console.log("Server running successfully."));
