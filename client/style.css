@@ -1,0 +1,30 @@
+
+.active-game {
+    border: solid black;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+#active-games {
+    border: solid black;
+    margin-top: 25px;
+}
+
+#active-games-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.active-game-players, .active-game-viewers {
+    padding: 10px;
+}
+
+.active-game-viewer-name, .active-game-player-name, .active-game-title, .active-game-players-num, .active-game-players-empty-message, .active-game-viewers-empty-message, .active-game-state, .active-game-join-button {
+    padding: 5px;
+}
+
+.active-game-viewers-heading, .active-game-players-heading, .active-game-players, .active-game-viewers, #active-games-heading, .active-game-title, .active-game-players-num, .active-game-state {
+    border-bottom: solid black;
+}

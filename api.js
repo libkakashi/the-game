@@ -159,13 +159,17 @@ module.exports = {
 	getActiveGames(){
 		const games = [];
 
-		this.activeGames.forEach(({ name, game }) => {
+		this.activeGames.forEach(({ game }, name) => {
 			games.push({
 				name: name, 
-				users: game.users, 
+				users: {
+					players: game.users.players.map(player => player.name),
+					viewers: game.users.viewers.map(viewer => viewer.name)
+				}, 
 				createdAt: game.createdAt, 
 				startedAt: game.startedAt, 
-				state: game.state 
+				state: game.state,
+				playersNum: game.playersNum 
 			});
 		});
 

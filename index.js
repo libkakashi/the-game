@@ -33,7 +33,7 @@ app.post("/api/creategame", (req, res) => {
 });
 
 app.get("/api/getactivegames", (req, res) => {
-	res.send(api.getActiveGames);
+	res.send(api.getActiveGames());
 });
 
 server.listen(8080, () => console.log("Server running successfully."));
