@@ -35,5 +35,12 @@ app.post("/api/creategame", (req, res) => {
 app.get("/api/getactivegames", (req, res) => {
 	res.send(api.getActiveGames());
 });
+/*
+api.on("join", (game) => {
+	io.of("/").emit("join", {
 
-server.listen(8080, () => console.log("Server running successfully."));
+	});
+});
+*/
+
+server.listen(0, () => console.log("Server running successfully."));

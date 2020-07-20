@@ -305,7 +305,7 @@ game.on("my_new_turn", () => {
 });
 
 game.on("game_flush", () => {
-	setTimeout(() => { emptyPlane() }, 5000);
+	setTimeout(() => { emptyPlane() }, 3000);
 });
 
 game.on("cards", () => {

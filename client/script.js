@@ -2,6 +2,8 @@ const activeGamesEl = document.getElementById("active-games-content");
 
 const getActiveGames = async () => await (await fetch("/api/getactivegames")).json();
 
+const activeGames = new Map();
+
 const updateActiveGames = (games) => {
     for(let i in games){
         const game = games[i];
@@ -41,7 +43,8 @@ const updateActiveGames = (games) => {
                 <a href="/game/${game.name}" class="active-game-join-button">Join game</a>
             </div>
         `;
-
+				
+				activeGames.set(game.name, game);
         activeGamesEl.appendChild(el);
     }    
 };

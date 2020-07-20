@@ -1,7 +1,9 @@
 const { Game } = require("./game");
+const Emitter = require("events");
 
 module.exports = {
 	activeGames: new Map,
+	emitter: new Emitter,
 
 	createNewGame(playersNum, name, io){
 		const game = new Game(playersNum);
@@ -129,12 +131,28 @@ module.exports = {
 					name: user.name,
 					type: user.type
 				});
+				
+				this.emitter.emit("usersChange", {
+					name: name, 
+					users: {
+						players: game.users.players.map(player => player.name),
+						viewers: game.users.viewers.map(viewer => viewer.name)
+					}
+				});
 			});
 			
 			socket.once("disconnect", () => {
 				if(user){
 					game.leave(user);
 					io.emit("leave", { name: user.name, type: user.type });
+					
+					this.emitter.emit("usersChange", {
+						name: name, 
+						users: {
+							players: game.users.players.map(player => player.name),
+							viewers: game.users.viewers.map(viewer => viewer.name)
+						}
+					});
 				}
 			});
 		});
@@ -165,7 +183,7 @@ module.exports = {
 				users: {
 					players: game.users.players.map(player => player.name),
 					viewers: game.users.viewers.map(viewer => viewer.name)
-				}, 
+				},
 				createdAt: game.createdAt, 
 				startedAt: game.startedAt, 
 				state: game.state,
@@ -174,5 +192,9 @@ module.exports = {
 		});
 
 		return games;
-	}
+	},
+	/*
+	on: this.emitter.on,
+	once: this.emitter.once
+	*/
 };
