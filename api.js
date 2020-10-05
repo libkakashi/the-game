@@ -33,16 +33,16 @@ module.exports = {
 		game.once("ready", () => {
 			const { name } = game.start();
 		
-			for(let player of game.users.players)
+			for(let player of game.users.players){
 				player.emit("start", {
 					player: name,
 					cards: player.cards,
 					extraCards: game.extraCards
 				});
+			}
 		});
 
 		io.on("connect", socket => {
-			
 			let user;
 			
 			socket.once("message", info => {
@@ -50,8 +50,7 @@ module.exports = {
 				
 				try {
 					user = game.join(info.name);
-				}
-				catch(e){
+				} catch(e){
 					socket.send({ err: e.message });
 					return;
 				}
@@ -76,8 +75,7 @@ module.exports = {
 						try {
 							user.put(cards, as);
 							socket.send({ ok: true });
-						}
-						catch(e){
+						} catch(e){
 							socket.send({ err: e.message });
 						}
 					});
@@ -85,8 +83,7 @@ module.exports = {
 						try {
 							user.look();
 							socket.send({ ok: true });
-						}
-						catch(e){
+						} catch(e){
 							socket.send({ err: e.message });
 						}
 					});
@@ -94,8 +91,7 @@ module.exports = {
 						try {
 							user.pass();
 							socket.send({ ok: true });
-						}
-						catch(e){
+						} catch(e){
 							socket.send({ err: e.message });
 						}
 					});
@@ -169,7 +165,7 @@ module.exports = {
 	deleteGame(name){
 		const game = this.activeGames[name];
 		
-		// cuz garbage collector won't do the first two
+		// cuz garbage collector wont do it meh
 		delete game.game;
 		delete game.io;
 		delete this.activeGames[name];
@@ -195,9 +191,5 @@ module.exports = {
 		};
 
 		return games;
-	},
-	/*
-	on: this.emitter.on,
-	once: this.emitter.once
-	*/
+	}
 };

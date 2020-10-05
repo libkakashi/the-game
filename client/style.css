@@ -4,13 +4,14 @@
 }
 
 body{
-    background:lightgreen;
+    background:rgb(122, 207, 122);
     text-align: center;
 }
 
 h1{
     color: #fff;
     text-align: center;
+    margin-top: 50px;
 }
 
 .active-game {
@@ -22,7 +23,7 @@ h1{
 
 #active-games {
     border: solid black;
-    margin-top: 25px;
+    margin: 25px;
 }
 
 #active-games-content {

@@ -72,12 +72,9 @@ class Game {
 					this.getPlayer(turn.last).num += turn.num;
 				else if(turn.player != this.you.name)
 					this.getPlayer(turn.player).num += turn.num;
-			}
-			else if(turn.type == "put" && turn.player != this.you.name){
+			} else if(turn.type == "put" && turn.player != this.you.name){
 				this.getPlayer(turn.player).num -= turn.num;
-			}
-			else 
-				return;
+			} else return;
 			
 			this.onUpdate();
 		});
@@ -109,15 +106,16 @@ class Game {
 	put(cards, as){
 		return new Promise((resolve, reject) => {
 			socket.once("message", msg => {
-			 	if(msg.ok) {
-			 		cards.forEach(card => {
-						 this.you.cards.splice(this.you.cards.find(crd => cmpCards(card, crd)), 1);
-						 this.onUpdate();
-					 });
-					 this.onUpdate();
-			 		resolve();
-			 	}
-			 	else reject(msg.err);
+			 	if(!msg.ok) {
+					reject(msg.err);
+					return;
+				}
+				cards.forEach(card => {
+					this.you.cards.splice(this.you.cards.find(crd => cmpCards(card, crd)), 1);
+					this.onUpdate();
+				});
+				this.onUpdate();
+				resolve();
 			 });
 			socket.emit("put", { cards, as });
 		});
@@ -163,44 +161,44 @@ class Game {
 	}
 	
 	getCardFromNormalName(card){
-		 const arr = card.split(" ");
-		 return [arr[0][0], arr[2][0]];
+		const arr = card.split(" ");
+		return [arr[0][0], arr[2][0]];
 	}
 	
 	getUnicodeChar(card){
 		let char = 0x1F000;
 		
 		switch(card[1]){
-			case "S":
-				char += 0xA0;
-				break;
-			case "H":
-				char += 0xB0;
-				break;
-			case "D":
-				char += 0xC0;
-				break;
-			case "C":
-				char += 0xD0;
-				break;
+		case "S":
+			char += 0xA0;
+			break;
+		case "H":
+			char += 0xB0;
+			break;
+		case "D":
+			char += 0xC0;
+			break;
+		case "C":
+			char += 0xD0;
+			break;
 		}
 		
 		switch(card[0]){
-			case "A":
-				char += 0x1;
-				break;
-			case "J":
-				char += 0xB;
-				break;
-			case "Q":
-				char += 0xD;
-				break;
-			case "K":
-				char += 0xE;
-				break;
-			default:
-				char += Number(card[0]);
-				break;
+		case "A":
+			char += 0x1;
+			break;
+		case "J":
+			char += 0xB;
+			break;
+		case "Q":
+			char += 0xD;
+			break;
+		case "K":
+			char += 0xE;
+			break;
+		default:
+			char += Number(card[0]);
+			break;
 		}
 		
 		return char;

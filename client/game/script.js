@@ -55,17 +55,17 @@ const setView = (view, userType) => {
 	currentView = view;
 	
 	switch(view){
-		case "game":
-			gameArea.style.display = "flex";
-			if(userType == "viewer")
-				controlsEl.style.display = "none";
-			break;
-		case "login":
-			loginArea.style.display = "flex";
-			break;
-		case "waiting":
-			waitingArea.style.display = "flex";
-			break;
+	case "game":
+		gameArea.style.display = "flex";
+		if(userType == "viewer")
+			controlsEl.style.display = "none";
+		break;
+	case "login":
+		loginArea.style.display = "flex";
+		break;
+	case "waiting":
+		waitingArea.style.display = "flex";
+		break;
 	}
 };
 
@@ -73,31 +73,27 @@ const updateView = (view, game) => {
 	
 	if(view == "waiting"){
 		let html = "";
-	
-		for(let player of game.users.players)
+		for(let player of game.users.players){
 			html += player.name+"</br>";
-		
+		}
 		wPlayersNumEl.innerHTML = `(${game.users.players.length}/${game.playersNum}) players joined.</br>`;
 		wPlayersEl.innerHTML = html;
-	}
-	else if(view == "game"){
+	} else if(view == "game"){
 		let i = 0;
 		
 		for(let player of game.users.players){
-			if(player.name != game.you.name)
+			if (player.name != game.you.name) {
 				setPlayerInfo(player, i++);
-			else {
-				if(game.you.cards){
-					setMainUserInfo(game.you);
-					setCards(game.you.cards);
-				}
+			} else if(game.you.cards){
+				setMainUserInfo(game.you);
+				setCards(game.you.cards);
 			}
 		}
 		
 		let j = 0;
-
-		for(let viewer of game.users.viewers)
+		for(let viewer of game.users.viewers) {
 			setViewerInfo(viewer, j++);
+		}
 	}
 };
 
@@ -117,8 +113,7 @@ const setCards = (cards) => {
 			if(index > -1){
 				selectedCards.splice(index, 1);
 				el.classList.remove("selected-card");
-			}
-			else {
+			} else {
 				selectedCards.push(card);
 				el.classList.add("selected-card");
 			}
@@ -162,30 +157,30 @@ const setMainUserInfo = ({ name, cards }) => {
 };
 
 const logTurn = (turn) => {
-	
 	if(turn.type == "first"){
-		logEl.innerHTML = `${turn.player} will do the first turn. ${turn.extraCards.length == 0 ? `No cards are left out of the game.` : (turn.extraCards.length == 1 ? `The ${game.normalizeCard(turn.extraCards[0])} is left out of the game.` : `${turn.extraCards.map(card => game.normalizeCard(card)).join(", ")} are left out of the game.`)}`;
+		logEl.innerHTML = `${turn.player} will do the first turn. ${turn.extraCards.length == 0 ? `No cards were left out of the game.` : (turn.extraCards.length == 1 ? `The ${game.normalizeCard(turn.extraCards[0])} is left out of the game.` : `${turn.extraCards.map(card => game.normalizeCard(card)).join(", ")} are left out of the game.`)}`;
 		return;
 	}
 	
 	let html;
 	
 	switch(turn.type){
-		case "put":
-			html = `${turn.player} throwed ${turn.num == 1 ? (turn.card == "A" ? "an" : "a") : turn.num} ${game.normalNames[turn.card] || turn.card}${turn.num > 1 ? "s": ""}.`;
-			break;
-		case "pass":
-			html = `${turn.player} passed.`;
-			break;
-		case "look":
-			html = `${turn.player} saw the cards. The cards were ${turn.success ? "wrong" : "right"}. All cards on plane will be given to ${turn.success ? turn.last : turn.player}.`;
-			break;
-		case "current_turn":
-			if(turn.num)
-				html = `The current turn has ${turn.num} ${turn.card}s.`;
-			else 
-				html = `There is nothing on the plane yet.`;
-			break;
+	case "put":
+		html = `${turn.player} throwed ${turn.num == 1 ? (turn.card == "A" ? "an" : "a") : turn.num} ${game.normalNames[turn.card] || turn.card}${turn.num > 1 ? "s": ""}.`;
+		break;
+	case "pass":
+		html = `${turn.player} passed.`;
+		break;
+	case "look":
+		html = `${turn.player} saw the cards. The cards were ${turn.success ? "wrong" : "right"}. All cards on plane will be given to ${turn.success ? turn.last : turn.player}.`;
+		break;
+	case "current_turn":
+		if(turn.num){
+			html = `The current turn has ${turn.num} ${turn.card}s.`;
+		} else { 
+			html = `There is nothing on the plane yet.`;
+		}
+		break;
 	}
 	
 	logEl.innerHTML = html+` Its ${turn.next == game.you.name ? "your" : turn.next+"'s"} turn now.`;
@@ -194,8 +189,9 @@ const logTurn = (turn) => {
 const enableInput = (inputs) => {
 	for(let i = 0; i < controls.inputs.length; ++i){
 		const input = controls.inputs[i];
-		if(inputs.some(inp => input.id.startsWith(inp)))
+		if(inputs.some(inp => input.id.startsWith(inp))) {
 			input.disabled = false;
+		}
 	}
 };
 
@@ -229,9 +225,9 @@ const emptySelectedCards = () => {
 	const cards = document.getElementsByClassName("selected-card");
 	let x = cards.length;
 	
-	for(let i = 0; i < x; ++i)
+	for(let i = 0; i < x; ++i){
 		cards[0].classList.remove("selected-card");
-	
+	}
 	selectedCards = [];
 };
 
@@ -240,7 +236,6 @@ const flipTopCards = (cards) => {
 	const x = cards.length*132/2;
 
 	for(let i = 1; i <= cards.length; ++i){
-
 		const cardEl = cardEls[cardEls.length-i];
 		
 		const transform = cardEl.style.transform;
@@ -279,20 +274,20 @@ game.on("leave", (usr) => {
 });
 
 game.on("turn", (turn) => {
-	if(turn.type == "put")
+	if(turn.type == "put"){
 		putOnPlane(turn.num);
-	else if(turn.type == "look")
+	} else if(turn.type == "look"){
 		flipTopCards(turn.cards);
-	
+	}
 	logTurn(turn);
 });
 
 game.on("new_turn", (turn) => {
-	if(turn.type == "put")
+	if(turn.type == "put") {
 		putOnPlane(turn.num);
-	else if(turn.type == "look")
+	} else if(turn.type == "look") {
 		flipTopCards(turn.cards);
-	
+	}
 	logTurn(turn);
 });
 
@@ -359,11 +354,11 @@ loginButton.onclick = () => {
 		name: nameInput.value || Math.random().toString(35)
 	})
 	.then(async () => {
-		if(game.state != "WAITING")
+		if(game.state != "WAITING") {
 			setView("game", game.you.type);
-		else
+		} else {
 			setView("waiting");
-			
+		}
 		updateView(currentView, game);
 	});
 };

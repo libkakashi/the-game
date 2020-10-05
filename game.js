@@ -12,49 +12,40 @@ class User extends Emitter {
 		this.game = game;
 		this.type = type;
 	}
-	
 	setCards(cards){
 		this.cards = cards;
 	}
-	
 	has(cards){
 		cards.forEach((card) => {
-			if(!this.cards.some(crd => cmpCard(crd, card)))
+			if(!this.cards.some(crd => cmpCard(crd, card))){
 				return false;
+			}
 		});
-		
 		return true;
 	}
-	
 	getIndex(card){
 		for(let i in this.cards){
 			const crd = this.cards[i];
 			
-			if(cmpCard(crd, card))
+			if(cmpCard(crd, card)) {
 				return i;
+			}
 		}
-		
 		return -1;
 	}
-	
 	getCard(index){
 		return this.cards[index];
 	}
-	
 	put(cards, as){
-		
 		if(this.has(cards)){
 			this.game.put(this, cards, as);
-		}
-		else {
+		} else {
 			throw new Error("You don't have these cards");
 		}
 	}
-	
 	look(){
 		this.game.look(this);
 	}
-	
 	pass(){
 		this.game.pass(this);
 	}
@@ -86,31 +77,30 @@ class Game extends Emitter {
 	}
 	
 	join(name){
-		if(!this.exists(name)){
-			const user = new User(name, this);
-			
-			user.type = this.state == "WAITING" ? "player" : "viewer";
-			
-			this.users[this.state == "WAITING" ? "players" : "viewers"].push(user);
-		
-			if(this.state == "WAITING" && this.users.players.length == this.playersNum){
-				this.state = "READY";
-				setImmediate(() => this.emit("ready"));
-			}
-			
-			return user;
-		}
-		else {
+		if(this.exists(name)){
 			throw new Error("Name already taken.");
 		}
+		const user = new User(name, this);
+		
+		user.type = this.state == "WAITING" ? "player" : "viewer";
+		
+		this.users[this.state == "WAITING" ? "players" : "viewers"].push(user);
+	
+		if(this.state == "WAITING" && this.users.players.length == this.playersNum){
+			this.state = "READY";
+			setImmediate(() => this.emit("ready"));
+		}
+		
+		return user;
 	}
 	
 	leave(user){
 		let i = this.users.viewers.indexOf(user);
 		
-		if(i != -1)
+		if(i != -1){
 			return this.users.viewers.splice(i, 1);
-		
+		}
+
 		i = this.users.players.indexOf(user);
 		
 		if(i != -1){
@@ -120,7 +110,7 @@ class Game extends Emitter {
 				setImmediate(() => this.emit("abort"));
 			}
 		}
-	}
+	};
 	
 	distributeCards(){
 		Game.shuffleDeck();
@@ -142,7 +132,7 @@ class Game extends Emitter {
 			this.users.players[i].setCards(cards[i]);
 
 		this.extraCards = extraCardsNum > 0 ? Game.deck.slice(Game.deck.length-extraCardsNum, Game.deck.length-1) : [];
-	}
+	};
 	
 	start(){
 		const user = this.users.players[0];
@@ -155,60 +145,55 @@ class Game extends Emitter {
 		setImmediate(() => user.emit("new_turn"));
 		
 		return user;
-	}
+	};
 	
 	put = (player, cards, as) => {
-		
-		if(this.users.players[this.turn].name == player.name){
-			
-			this.passCount = 0;
-			
-			const next = this.nextTurn();
-				
-			if(this.cardCount === 0){
-				this.currentCard = as;
 
-				setImmediate(() => this.emit("new_turn", {
-					type: "put",
-					num: cards.length,
-					player: player.name,
-					card: this.currentCard,
-					next: next.name
-				}));
-			}
-			else {
-				setImmediate(() => this.emit("turn", {
-					type: "put",
-					num: cards.length,
-					player: player.name,
-					card: this.currentCard,
-					next: next.name
-				}));
-			}
-
-			setImmediate(() => next.emit("turn"));
-				
-			this.currentStack.push({ cards, player });
-			this.cardCount += cards.length;
-			
-			for(let card of cards)
-				player.cards.splice(player.cards.find(crd => cmpCard(crd, card)), 1);
-			
-			
-			if(this.winTurn)
-				this.announceWinner(this.winTurnPlayer);
-
-			if(player.cards.length === 0){
-				this.winTurn = true;
-				this.winTurnPlayer = player;
-			}
-			else {
-				this.winTurn = false;
-				this.winTurnPlayer = null;
-			}
-		}
-		else {
+		if(this.users.players[this.turn].name != player.name){
 			throw new Error("Its not your turn.");
+		}	
+
+		this.passCount = 0;
+		
+		const next = this.nextTurn();
+			
+		if(this.cardCount === 0){
+			this.currentCard = as;
+
+			setImmediate(() => this.emit("new_turn", {
+				type: "put",
+				num: cards.length,
+				player: player.name,
+				card: this.currentCard,
+				next: next.name
+			}));
+		} else {
+			setImmediate(() => this.emit("turn", {
+				type: "put",
+				num: cards.length,
+				player: player.name,
+				card: this.currentCard,
+				next: next.name
+			}));
+		}
+
+		setImmediate(() => next.emit("turn"));
+			
+		this.currentStack.push({ cards, player });
+		this.cardCount += cards.length;
+		
+		for(let card of cards)
+			player.cards.splice(player.cards.find(crd => cmpCard(crd, card)), 1);
+		
+		if(this.winTurn)
+			this.announceWinner(this.winTurnPlayer);
+
+		if(player.cards.length === 0){
+			this.winTurn = true;
+			this.winTurnPlayer = player;
+		} else {
+			this.winTurn = false;
+			this.winTurnPlayer = null;
 		}
 	};
 	
@@ -218,68 +203,58 @@ class Game extends Emitter {
 		if(this.turn == this.playersNum)
 			this.turn = 0;
 			
-		const player = this.users.players[this.turn];
-		
-		return player;
-	}
+		return this.users.players[this.turn];
+	};
 	
 	look = (player) => {
-		
-		if(this.users.players[this.turn].name == player.name){
-			
-			if(this.currentStack.length > 0){
-				this.passCount = 0;
-			
-				const lastTurn = this.currentStack[this.currentStack.length-1];
-				const cardCount = this.cardCount;
-				
-				if(!lastTurn.cards.every(card => card[0] == this.currentCard)){
-				
-					setImmediate(() => this.emit("turn", { 
-						type: "look",
-						success: true,
-						cards: lastTurn.cards,
-						player: player.name,
-						last: lastTurn.player.name,
-						num: cardCount,
-						next: player.name
-					}));
-					
-					this.winTurn = false;
-					this.winTurnPlayer = null;
 
-					this.flush(lastTurn.player);
-					this.newTurn(player);
-				}
-				else {	
-					setImmediate(() => this.emit("turn", { 
-						type: "look",
-						success: false,
-						cards: lastTurn.cards,
-						player: player.name,
-						last: lastTurn.player.name,
-						num: cardCount,
-						next: lastTurn.player.name
-					}));
-					
-					if(this.winTurn)
-						this.announceWinner(this.winTurnPlayer)
-					
-					this.flush(player);
-					this.newTurn(lastTurn.player);	
-				}
-			}
-			else {
-				throw new Error("There are no cards to look.");
-			}
-		}
-		else {
+		if(this.users.players[this.turn].name == player.name){
 			throw new Error("Its not your turn.");
+		}
+		if(this.currentStack.length == 0){
+			throw new Error("There are no cards to look.");
+		}
+		this.passCount = 0;
+	
+		const lastTurn = this.currentStack[this.currentStack.length-1];
+		const cardCount = this.cardCount;
+		
+		if(!lastTurn.cards.every(card => card[0] == this.currentCard)){
+			setImmediate(() => this.emit("turn", { 
+				type: "look",
+				success: true,
+				cards: lastTurn.cards,
+				player: player.name,
+				last: lastTurn.player.name,
+				num: cardCount,
+				next: player.name
+			}));
+			
+			this.winTurn = false;
+			this.winTurnPlayer = null;
+
+			this.flush(lastTurn.player);
+			this.newTurn(player);
+		} else {	
+			setImmediate(() => this.emit("turn", { 
+				type: "look",
+				success: false,
+				cards: lastTurn.cards,
+				player: player.name,
+				last: lastTurn.player.name,
+				num: cardCount,
+				next: lastTurn.player.name
+			}));
+			
+			if(this.winTurn)
+				this.announceWinner(this.winTurnPlayer)
+			
+			this.flush(player);
+			this.newTurn(lastTurn.player);	
 		}
 	}
 	
 	flush(player){
-		
 		if(player){
 			let cards = [];
 		
@@ -299,50 +274,42 @@ class Game extends Emitter {
 	}
 	
 	pass = (player) => {
-		
-		if(this.users.players[this.turn].name == player.name){
-				
-			if(this.currentStack.length){
-				++this.passCount;
-				
-				if(this.passCount == this.playersNum){
-					
-					let next = this.currentStack[this.currentStack.length-1].player;
-					
-					
-					if(this.winTurn){
-						this.announceWinner(this.winTurnPlayer);
-						next = this.currentStack[this.currentStack.length-2];
-					}
-
-					this.flush();
-					
-					setImmediate(() => this.emit("turn", { 
-						type: "pass",
-						player: player.name,
-						next: next.name
-					}));
-				
-					this.newTurn(next);
-				}
-				else {
-					const next = this.nextTurn();
-					
-					setImmediate(() => this.emit("turn", { 
-						type: "pass",
-						player: player.name,
-						next: next.name
-					}));
-					
-					setImmediate(() => next.emit("turn"));
-				}
-			}
-			else {
-				throw new Error("You can't pass this turn.");
-			}
-		}
-		else {
+		if(this.users.players[this.turn].name != player.name){
 			throw new Error("Its not your turn.");
+		}
+		if(this.currentStack.length == 0){	
+			throw new Error("You can't pass this turn.");
+		}
+
+		++this.passCount;
+		
+		if(this.passCount == this.playersNum){
+			let next = this.currentStack[this.currentStack.length-1].player;
+			
+			if(this.winTurn){
+				this.announceWinner(this.winTurnPlayer);
+				next = this.currentStack[this.currentStack.length-2];
+			}
+
+			this.flush();
+			
+			setImmediate(() => this.emit("turn", { 
+				type: "pass",
+				player: player.name,
+				next: next.name
+			}));
+		
+			this.newTurn(next);
+		} else {
+			const next = this.nextTurn();
+			
+			setImmediate(() => this.emit("turn", { 
+				type: "pass",
+				player: player.name,
+				next: next.name
+			}));
+			
+			setImmediate(() => next.emit("turn"));
 		}
 	}
 	
@@ -354,7 +321,6 @@ class Game extends Emitter {
 	}
 	
 	static shuffleDeck(){
-		
 		for(let i = 0; i < 100; ++i){
 			const rand = Math.floor(Math.random()*52);
 			const i = Math.floor(Math.random()*(52-rand));
