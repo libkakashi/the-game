@@ -56,56 +56,7 @@ module.exports = {
 				}
 				user.sock = socket;
 				
-				if(state == "WAITING"){
-					
-					user.on("new_turn", () => {
-						socket.emit("my_new_turn");
-					});
-					user.on("turn", () => {
-						socket.emit("my_turn");
-					});
-					user.on("cards", cards => {
-						socket.emit("cards", cards);
-					});
-					user.on("start", data => {
-						socket.emit("start", data);
-					});
-					
-					socket.on("put", ({ cards, as }) => {
-						try {
-							user.put(cards, as);
-							socket.send({ ok: true });
-						} catch(e){
-							socket.send({ err: e.message });
-						}
-					});
-					socket.on("look", () => {
-						try {
-							user.look();
-							socket.send({ ok: true });
-						} catch(e){
-							socket.send({ err: e.message });
-						}
-					});
-					socket.on("pass", () => {
-						try {
-							user.pass();
-							socket.send({ ok: true });
-						} catch(e){
-							socket.send({ err: e.message });
-						}
-					});
-					
-					socket.send({
-						users: {
-							players: game.users.players.map(player => ({ name: player.name, type: "player" })),
-							viewers: game.users.viewers.map(viewer => ({ name: viewer.name, type: "viewer" }))
-						},
-						playersNum: game.playersNum,
-						state: game.state
-					});
-				}
-				else {
+				if(state != "WAITING"){
 					socket.send({
 						users: {
 							players: game.users.players.map(player => ({ name: player.name, type: "player", num: player.cards.length })),
@@ -119,7 +70,55 @@ module.exports = {
 							card: this.currentTurn
 						}
 					});
+					return;
 				}
+
+				user.on("new_turn", () => {
+					socket.emit("my_new_turn");
+				});
+				user.on("turn", () => {
+					socket.emit("my_turn");
+				});
+				user.on("cards", cards => {
+					socket.emit("cards", cards);
+				});
+				user.on("start", data => {
+					socket.emit("start", data);
+				});
+				
+				socket.on("put", ({ cards, as }) => {
+					try {
+						user.put(cards, as);
+						socket.send({ ok: true });
+					} catch(e){
+						socket.send({ err: e.message });
+					}
+				});
+				socket.on("look", () => {
+					try {
+						user.look();
+						socket.send({ ok: true });
+					} catch(e){
+						socket.send({ err: e.message });
+					}
+				});
+				socket.on("pass", () => {
+					try {
+						user.pass();
+						socket.send({ ok: true });
+					} catch(e){
+						socket.send({ err: e.message });
+					}
+				});
+				
+				socket.send({
+					users: {
+						players: game.users.players.map(player => ({ name: player.name, type: "player" })),
+						viewers: game.users.viewers.map(viewer => ({ name: viewer.name, type: "viewer" }))
+					},
+					playersNum: game.playersNum,
+					state: game.state
+				});
 				
 				socket.on("chat", (msg) =>{
 					io.emit("chat", { user: user.name, msg });
@@ -140,18 +139,18 @@ module.exports = {
 			});
 			
 			socket.once("disconnect", () => {
-				if(user){
-					game.leave(user);
-					io.emit("leave", { name: user.name, type: user.type });
-					
-					this.emitter.emit("usersChange", {
-						name: name, 
-						users: {
-							players: game.users.players.map(player => player.name),
-							viewers: game.users.viewers.map(viewer => viewer.name)
-						}
-					});
-				}
+				if(!user) return;
+
+				game.leave(user);
+				io.emit("leave", { name: user.name, type: user.type });
+				
+				this.emitter.emit("usersChange", {
+					name: name, 
+					users: {
+						players: game.users.players.map(player => player.name),
+						viewers: game.users.viewers.map(viewer => viewer.name)
+					}
+				});
 			});
 		});
 
